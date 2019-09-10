@@ -1,0 +1,12 @@
+FROM alpine:3.9
+LABEL Author "Hamza Althunibat <althunibat@outlook.com>"
+
+RUN apk add curl
+
+ARG SVC_URL
+
+# Add check script
+COPY build/helper/scripts/cmd.sh /usr/local/bin/cmd.sh
+RUN chmod +x /usr/local/bin/cmd.sh
+
+CMD ["cmd.sh"]

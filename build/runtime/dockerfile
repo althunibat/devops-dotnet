@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-alpine
+LABEL Author "Hamza Althunibat <althunibat@outlook.com>"
+
+COPY publish/. /app
+WORKDIR /app
+EXPOSE 80
+CMD [ "dotnet", "Api.dll" ]

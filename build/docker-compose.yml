@@ -1,0 +1,44 @@
+version: '3.4'
+
+services: 
+  tester:
+    build: 
+      context: ../
+      dockerfile: build/sdk/dockerfile
+    command: ["unittest.sh"]
+
+  quality:
+    build: 
+      context: ../
+      dockerfile: build/sdk/dockerfile
+    command: ["quality.sh"] 
+    environment: 
+      - PJ_KEY
+      - SONAR_HOST_URL
+      - SONAR_AUTH_TOKEN
+
+  publisher:
+    build:
+      context: ../
+      dockerfile: build/sdk/dockerfile
+    command: ["publish.sh"]
+
+  api:
+    build:
+      context: ../
+      dockerfile: build/runtime/dockerfile
+  
+  checker:
+    build: 
+      context: ../
+      dockerfile: build/helper/dockerfile
+    environment:
+     - SVC_URL=http://api/hc  
+
+  integration:
+    build: 
+      context: ../
+      dockerfile: build/sdk/dockerfile
+    command: ["integration.sh"]
+    environment:
+     - SVC_HOST=api

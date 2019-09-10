@@ -1,0 +1,99 @@
+pipeline {
+    agent {
+        label "jenkins-slave"
+    }
+    options {
+      gitLabConnection("godwit")
+    }
+    parameters {
+        string(name: "PROJ_NAME", defaultValue: "service", description: "")
+        string(name: "PJ_KEY", defaultValue: "SampleApp", description: "")
+        string(name: "DOCKER_REGISTRY", defaultValue: "registry.godwit.io", description: "")
+    }
+    environment{
+         DOCKER = credentials('RegistryLogin')     
+    }
+    stages {
+        stage("pulling code"){
+            steps{
+              checkout scm 
+            }
+        }
+        stage("unit testing"){
+            steps{
+                updateGitlabCommitStatus name: "jenkins", state: "running"  
+                sh "label": "login into repository", "script": " echo '$DOCKER_PSW' | docker login ${params.DOCKER_REGISTRY} -u ${DOCKER_USR} --password-stdin"
+                sh "label":"build tester image", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull tester"                
+                sh "label":"run tests", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up tester"
+                sh "label":"extract Reports", "script":"docker cp `docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml ps -q tester`:/reports/. $WORKSPACE/reports"
+            } 
+        }
+        stage("code scanning"){
+            environment {
+                PJ_KEY = "${params.PJ_KEY}"
+            }
+            steps{
+                withSonarQubeEnv("SonarQube"){
+                    sh "label":"build analyzer image", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull quality"
+                    sh "label":"Analyze the code", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up quality"
+                    sh "label":"Extract files", "script":"docker cp `docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml ps -q quality`:/app/.sonarqube/. $WORKSPACE/.sonarqube"
+                    sh "label":"Extract files ..", "script":"docker cp `docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml ps -q quality`:/root/.dotnet/tools/.store/dotnet-sonarscanner/4.6.2/dotnet-sonarscanner/4.6.2/tools/netcoreapp2.1/any/sonar-scanner-3.3.0.1492/. $WORKSPACE/.sonarqube"
+                }
+             }
+        }
+        stage ("integration testing"){
+            when{
+              branch "master"
+            }
+            steps{
+                sh "label": "Compile sourcecode", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull publisher"
+                sh "label": "Compile sourcecode", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up publisher"
+                sh "label": "Extract Binaries", "script": "docker cp `docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml ps -q publisher`:/publish/. $WORKSPACE/publish"
+                sh "label": "Run Api", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up -d --build api"
+                sh "label": "Wait... it is up", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up checker"
+                sh "label": "Run tests", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up --build integration"
+                sh "label": "Extract Reports", "script":"docker cp `docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml ps -q integration`:/reports/. $WORKSPACE/reports"
+            }
+        }
+        stage("publishing reports"){
+            steps{
+                cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: "**/reports/coverage.cobertura.xml", conditionalCoverageTargets: "70, 0, 0", enableNewApi: true, failUnhealthy: false, failUnstable: false, lineCoverageTargets: "80, 0, 0", maxNumberOfBuilds: 0, methodCoverageTargets: "80, 0, 0", onlyStable: false, sourceEncoding: "ASCII", zoomCoverageChart: false
+                mstest keepLongStdio: true, testResultsFile: "**/reports/*.trx"
+                timeout(time: 3, unit: "MINUTES"){
+                    waitForQualityGate abortPipeline: true
+                }                    
+            }                
+        }
+        stage("building & publishing deployment artifacts"){
+            when{
+              branch "master"
+            }
+            environment {
+                IMAGE_TAG = "${params.DOCKER_REGISTRY}/${params.PROJ_NAME}:$BRANCH_NAME-$BUILD_NUMBER"
+                CODE_TAG = "$BRANCH_NAME-$BUILD_NUMBER" 
+             }
+            steps{
+                sh "label": "tagging the image", "script": "docker tag ${params.PROJ_NAME}_api $IMAGE_TAG"
+                sh "label": "pushing the image", "script": "docker push $IMAGE_TAG"
+                sh "label": "logging out from registry", "script": "docker logout ${params.DOCKER_REGISTRY}"
+                sshagent (credentials: ['git-key']) {
+                    sh "label": "tagging source code", "script": "git tag $CODE_TAG"
+                    sh "label": "pushing the tag", "script": "git push $GIT_URL $CODE_TAG"
+                }
+                sh "label": "deploying the chart", "script": "helm upgrade api --install --namespace godwit ./charts/dotnet-api --version=$CODE_TAG --set image.tag=$CODE_TAG"
+            }
+        }
+    }
+    post{
+        failure {
+            updateGitlabCommitStatus name: "jenkins", state: "failed"
+        }
+        success {
+            updateGitlabCommitStatus name: "jenkins", state: "success"
+        }
+        cleanup{
+            sh "label":"Shutting down the execution", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml down -v --remove-orphans"
+            cleanWs()            
+        }
+    }
+}

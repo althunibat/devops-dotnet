@@ -1,0 +1,108 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F75CE038-AA48-40C1-8AB4-417085D061C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D7619429-9372-4C2A-B5BF-B60986454F57}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{FEFE5ADE-3D36-480B-9791-31BB17062203}"
+	ProjectSection(SolutionItems) = preProject
+		build\docker-compose.yml = build\docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "src\Api\Api.csproj", "{F6E04F45-C85B-4973-99C7-905B739FD113}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{91ACBF46-0DFD-4CB9-BBB1-50860EBAAC39}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntegrationTests", "test\IntegrationTests\IntegrationTests.csproj", "{3A618B6E-F001-4524-90EB-6393F7E684E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "helper", "helper", "{9E8C35EA-9798-4024-9A09-05A7CFC15C64}"
+	ProjectSection(SolutionItems) = preProject
+		build\helper\dockerfile = build\helper\dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{9F9BDDDE-9673-4E6E-839B-03C4698CC9BA}"
+	ProjectSection(SolutionItems) = preProject
+		build\helper\scripts\cmd.sh = build\helper\scripts\cmd.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "runtime", "runtime", "{35DB470C-85B7-41C8-BE8D-220DA91703A2}"
+	ProjectSection(SolutionItems) = preProject
+		build\runtime\dockerfile = build\runtime\dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sdk", "sdk", "{70E7C6B6-6F5F-4625-B133-5FB4DC0440E9}"
+	ProjectSection(SolutionItems) = preProject
+		build\sdk\dockerfile = build\sdk\dockerfile
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{79F749B1-B532-4836-9641-E650ABAED2ED}"
+	ProjectSection(SolutionItems) = preProject
+		build\sdk\scripts\integration.sh = build\sdk\scripts\integration.sh
+		build\sdk\scripts\publish.sh = build\sdk\scripts\publish.sh
+		build\sdk\scripts\quality.sh = build\sdk\scripts\quality.sh
+		build\sdk\scripts\unittest.sh = build\sdk\scripts\unittest.sh
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "publish", "publish", "{9D940210-19F2-47B7-A2EC-3B3B866D7339}"
+	ProjectSection(SolutionItems) = preProject
+		publish\output.md = publish\output.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "reports", "reports", "{70D65AD7-3635-4969-AA0D-9F6BA244DD70}"
+	ProjectSection(SolutionItems) = preProject
+		reports\output.md = reports\output.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{160EB336-875C-45CA-AC88-E070B8461ECE}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitignore = .gitignore
+		jenkinsfile = jenkinsfile
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deployment", "deployment", "{D75E4CAC-388C-4CAA-9CA2-ED3A8BB13615}"
+	ProjectSection(SolutionItems) = preProject
+		deployment\docker-compose.yml = deployment\docker-compose.yml
+		deployment\dockerfile = deployment\dockerfile
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F6E04F45-C85B-4973-99C7-905B739FD113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6E04F45-C85B-4973-99C7-905B739FD113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6E04F45-C85B-4973-99C7-905B739FD113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6E04F45-C85B-4973-99C7-905B739FD113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91ACBF46-0DFD-4CB9-BBB1-50860EBAAC39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91ACBF46-0DFD-4CB9-BBB1-50860EBAAC39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91ACBF46-0DFD-4CB9-BBB1-50860EBAAC39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91ACBF46-0DFD-4CB9-BBB1-50860EBAAC39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A618B6E-F001-4524-90EB-6393F7E684E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A618B6E-F001-4524-90EB-6393F7E684E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A618B6E-F001-4524-90EB-6393F7E684E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A618B6E-F001-4524-90EB-6393F7E684E5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F6E04F45-C85B-4973-99C7-905B739FD113} = {F75CE038-AA48-40C1-8AB4-417085D061C5}
+		{91ACBF46-0DFD-4CB9-BBB1-50860EBAAC39} = {D7619429-9372-4C2A-B5BF-B60986454F57}
+		{3A618B6E-F001-4524-90EB-6393F7E684E5} = {D7619429-9372-4C2A-B5BF-B60986454F57}
+		{9E8C35EA-9798-4024-9A09-05A7CFC15C64} = {FEFE5ADE-3D36-480B-9791-31BB17062203}
+		{9F9BDDDE-9673-4E6E-839B-03C4698CC9BA} = {9E8C35EA-9798-4024-9A09-05A7CFC15C64}
+		{35DB470C-85B7-41C8-BE8D-220DA91703A2} = {FEFE5ADE-3D36-480B-9791-31BB17062203}
+		{70E7C6B6-6F5F-4625-B133-5FB4DC0440E9} = {FEFE5ADE-3D36-480B-9791-31BB17062203}
+		{79F749B1-B532-4836-9641-E650ABAED2ED} = {70E7C6B6-6F5F-4625-B133-5FB4DC0440E9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9AD85D0D-B582-45B5-9D76-A140AF88F152}
+	EndGlobalSection
+EndGlobal

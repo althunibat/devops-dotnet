@@ -1,1 +1,1 @@
-# devops-dotnet
+[![Quality gate](https://sonarqube.godwit.io/api/project_badges/quality_gate?project=SampleApp)](https://sonarqube.godwit.io/dashboard?id=SampleApp)
