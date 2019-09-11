@@ -2,6 +2,9 @@ pipeline {
     agent {
         label "jenkins-slave"
     }
+    options {
+      gitLabConnection("godwit")
+    }
     parameters {
         string(name: "PROJ_NAME", defaultValue: "service", description: "")
         string(name: "PJ_KEY", defaultValue: "dotnet-api", description: "")
@@ -18,7 +21,7 @@ pipeline {
         }
         stage("unit testing"){
             steps{
-                githubNotify context: 'Jenkins Build', description: 'Automated Build by Jenkins',  status: 'PENDING'
+                updateGitlabCommitStatus name: "jenkins", state: "running"  
                 sh "label": "login into repository", "script": " echo '$DOCKER_PSW' | docker login ${params.DOCKER_REGISTRY} -u ${DOCKER_USR} --password-stdin"
                 sh "label":"build tester image", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull tester"                
                 sh "label":"run tests", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up tester"
@@ -77,17 +80,16 @@ pipeline {
                     sh "label": "tagging source code", "script": "git tag $CODE_TAG"
                     sh "label": "pushing the tag", "script": "git push $GIT_URL $CODE_TAG"
                 }
-               // sh "label": "deploying the chart", "script": "helm upgrade api --install --namespace godwit ./charts/dotnet-api --version=$CODE_TAG --set image.tag=$CODE_TAG"
+                sh "label": "deploying the chart", "script": "helm upgrade api --install --namespace godwit ./charts/dotnet-api --version=$CODE_TAG --set image.tag=$CODE_TAG"
             }
         }
     }
     post{
         failure {
-            githubNotify context: 'Jenkins Build', description: 'Automated Build by Jenkins',  status: 'FAILURE'
-
+            updateGitlabCommitStatus name: "jenkins", state: "failed"
         }
         success {
-            githubNotify context: 'Jenkins Build', description: 'Automated Build by Jenkins',  status: 'SUCCESS'
+            updateGitlabCommitStatus name: "jenkins", state: "success"
         }
         cleanup{
             sh "label":"Shutting down the execution", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml down -v --remove-orphans"
