@@ -77,7 +77,8 @@ pipeline {
                     sh "label": "tagging source code", "script": "git tag $CODE_TAG"
                     sh "label": "pushing the tag", "script": "git push $GIT_URL $CODE_TAG"
                 }
-             // sh "label": "deploying the chart", "script": "helm upgrade api --install --namespace godwit ./charts/dotnet-api --version=$CODE_TAG --set image.tag=$CODE_TAG"
+                sh "label": "pushing the chart", "script": "helm push deploy/dotnet-api/ --version $CODE_TAG"
+                //sh "label": "pushing the chart", "script": "helm upgrade api --install --namespace godwit ./charts/dotnet-api --version=$CODE_TAG --set image.tag=$CODE_TAG"
             }
         }
     }
