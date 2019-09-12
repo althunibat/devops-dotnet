@@ -11,11 +11,6 @@ pipeline {
          DOCKER = credentials('RegistryLogin')     
     }
     stages {
-        stage("pulling code"){
-            steps{
-              checkout scm 
-            }
-        }
         stage("unit testing"){
             steps{
                 githubNotify context: "Jenkins Build $BUILD_NUMBER", description: 'Automatic Build by Jenkins', credentialsId: 'github-user', status: 'PENDING'
@@ -43,7 +38,7 @@ pipeline {
               branch "master"
             }
             steps{
-                sh "label": "Compile sourcecode", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull publisher"
+                sh "label": "Building sourcecode compiler image", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull publisher"
                 sh "label": "Compile sourcecode", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up publisher"
                 sh "label": "Extract Binaries", "script": "docker cp `docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml ps -q publisher`:/publish/. $WORKSPACE/publish"
                 sh "label": "Run Api", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up -d --build api"
