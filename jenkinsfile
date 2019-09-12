@@ -39,6 +39,9 @@ pipeline {
              }
         }
         stage ("integration testing"){
+            when{
+              branch "master"
+            }
             steps{
                 sh "label": "Compile sourcecode", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull publisher"
                 sh "label": "Compile sourcecode", "script": "docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up publisher"
@@ -59,6 +62,9 @@ pipeline {
             }                
         }
         stage("building & publishing deployment artifacts"){
+            when{
+              branch "master"
+            }
             environment {
                 IMAGE_TAG = "${params.DOCKER_REGISTRY}/${params.PROJ_NAME}:$BRANCH_NAME-$BUILD_NUMBER"
                 CODE_TAG = "$BRANCH_NAME-$BUILD_NUMBER" 
