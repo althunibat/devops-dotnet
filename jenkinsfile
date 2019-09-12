@@ -18,6 +18,7 @@ pipeline {
         }
         stage("unit testing"){
             steps{
+                githubNotify context: 'Jenkins Build $BUILD_NUMBER', credentialsId: 'github-user', status: 'PENDING'
                 sh "label": "login into repository", "script": " echo '$DOCKER_PSW' | docker login ${params.DOCKER_REGISTRY} -u ${DOCKER_USR} --password-stdin"
                 sh "label":"build tester image", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml build --pull tester"                
                 sh "label":"run tests", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml up tester"
@@ -74,7 +75,14 @@ pipeline {
             }
         }
     }
-    post{
+    post{ 
+        failure {
+            githubNotify context: 'Jenkins Build $BUILD_NUMBER', credentialsId: 'github-user', status: 'FAILURE'
+
+        }
+        success {
+            githubNotify context: 'Jenkins Build $BUILD_NUMBER', credentialsId: 'github-user', status: 'SUCCESS'
+        }
         cleanup{
             sh "label":"Shutting down the execution", "script":"docker-compose -p ${params.PROJ_NAME} -f $WORKSPACE/build/docker-compose.yml down -v --remove-orphans"
             cleanWs()            
