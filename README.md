@@ -1,1 +1,1 @@
-[![Quality gate](https://sonarqube.godwit.io/api/project_badges/quality_gate?project=SampleApp)](https://sonarqube.godwit.io/dashboard?id=SampleApp)
+[![Quality gate](https://sonar.godwit.io/api/project_badges/quality_gate?project=dotnet-api)](https://sonar.godwit.io/dashboard?id=dotnet-api)
