@@ -1,0 +1,5 @@
+replicaCount: 4
+namespace: api
+tag:
+imagePullSecret: godwit
+host: dotnet-api.godwit.io
