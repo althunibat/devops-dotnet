@@ -21,7 +21,7 @@ spec:
         io.godwit.service:  dotnet-api-{{.Release.Name}}
     spec:
       containers:
-      - image: registry.godwit.io/service:{{.Values.tag}}
+      - image: registry.godwit.io/service:{{.Release.Name}}
         imagePullPolicy: Always
         name: dotnet-api-{{.Release.Name}}
         ports:
