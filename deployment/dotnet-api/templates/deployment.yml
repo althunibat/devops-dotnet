@@ -28,6 +28,13 @@ spec:
         - containerPort: 80
           name: http
           protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /hc
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 15
+
       resources: {}
       imagePullSecrets:
       - name: {{ .Values.imagePullSecret }}
