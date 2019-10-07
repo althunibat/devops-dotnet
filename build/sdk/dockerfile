@@ -77,6 +77,10 @@ COPY *.sln /app
 WORKDIR /app
 #RUN dotnet restore
 COPY build/sdk/scripts/publish.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/publish.sh
 COPY build/sdk/scripts/unittest.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/unittest.sh
 COPY build/sdk/scripts/quality.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/quality.sh
 COPY build/sdk/scripts/integration.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/integration.sh
